@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import { client, urlFor } from '@/lib/client'
 import { AiOutlineMinus, AiOutlinePlus, AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import { Product } from '@/components';
+import { useStateContext } from '@/context/StateContext';
 
 
 const ProductDetails = ({ product, products }) => {
     const { image, name, details, price } = product;
     const [index, setIndex] = useState(0);
+    const { decQty, incQty, qty } = useStateContext();
 
     return (
         <div>
@@ -15,30 +17,10 @@ const ProductDetails = ({ product, products }) => {
                     <div className="image-container">
                         <img src={urlFor(image && image[index])} className="product-detail-image" />
                     </div>
-                    <div className="small-images-container">
-                        {image?.map((item, i) => (
-                            <img
-                                key={i}
-                                src={urlFor(item)}
-                                className={i === index ? 'small-image selected-image' : 'small-image'}
-                                onMouseEnter={() => setIndex(i)}
-                            />
-                        ))}
-                    </div>
                 </div>
 
                 <div className="product-detail-desc">
                     <h1>{name}</h1>
-                    <div className='reviews'>
-                        <div>
-                            <AiFillStar />
-                            <AiFillStar />
-                            <AiFillStar />
-                            <AiFillStar />
-                            <AiOutlineStar />
-                        </div>
-                        <p>(20)</p>
-                    </div>
                     <h4>Detalles: </h4>
                     <p>{details}</p>
                     <p className="price">${price}</p>
@@ -46,11 +28,11 @@ const ProductDetails = ({ product, products }) => {
                         <h3>Cantidad: </h3>
                         <p className="quantity-desc">
                             <span className="minus"
-                                onClick=""><AiOutlineMinus /></span>
+                                onClick={decQty}><AiOutlineMinus /></span>
                             <span className="num" o
-                                nClick="">0</span>
+                                nClick="">{qty}</span>
                             <span className="plus"
-                                onClick=""><AiOutlinePlus /></span>
+                                onClick={incQty}><AiOutlinePlus /></span>
                         </p>
                     </div>
                     <div className="buttons">
