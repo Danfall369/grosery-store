@@ -13,6 +13,10 @@ export const StateContext = ({ children }) => {
     let foundProduct;
     let index;
 
+    const formatPrice = (price) => {
+        return price.toFixed(2);
+    };
+
     const onAdd = (product, quantity) => {
         const checkProductInCart = cartItems.find((item) => item._id === product._id);
 
@@ -21,11 +25,15 @@ export const StateContext = ({ children }) => {
 
         if (checkProductInCart) {
             const updatedCartItems = cartItems.map((cartProduct) => {
-                if (cartProduct._id === product._id) return {
-                    ...cartProduct,
-                    quantity: cartProduct.quantity + quantity
+                if (cartProduct._id === product._id) {
+                    return {
+                        ...cartProduct,
+                        quantity: cartProduct.quantity + quantity,
+                    };
+                } else {
+                    return cartProduct;
                 }
-            })
+            });
 
             setCartItems(updatedCartItems);
         } else {
@@ -35,38 +43,38 @@ export const StateContext = ({ children }) => {
         }
 
         toast.success(`${qty} ${product.name} En el carrito.`);
-    }
+    };
 
     const onRemove = (product) => {
         foundProduct = cartItems.find((item) => item._id === product._id);
         const newCartItems = cartItems.filter((item) => item._id !== product._id);
 
         setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price * foundProduct.quantity);
-        setTotalQuantities(prevTotalQuantities => prevTotalQuantities - foundProduct.quantity);
+        setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - foundProduct.quantity);
         setCartItems(newCartItems);
-    }
+    };
 
     const toggleCartItemQuanitity = (id, value) => {
-        foundProduct = cartItems.find((item) => item._id === id)
+        foundProduct = cartItems.find((item) => item._id === id);
         index = cartItems.findIndex((product) => product._id === id);
-        const newCartItems = cartItems.filter((item) => item._id !== id)
+        const newCartItems = cartItems.filter((item) => item._id !== id);
 
         if (value === 'inc') {
             setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity + 1 }]);
-            setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price)
-            setTotalQuantities(prevTotalQuantities => prevTotalQuantities + 1)
+            setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price);
+            setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + 1);
         } else if (value === 'dec') {
             if (foundProduct.quantity > 1) {
                 setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity - 1 }]);
-                setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price)
-                setTotalQuantities(prevTotalQuantities => prevTotalQuantities - 1)
+                setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price);
+                setTotalQuantities((prevTotalQuantities) => prevTotalQuantities - 1);
             }
         }
-    }
+    };
 
     const incQty = () => {
         setQty((prevQty) => prevQty + 1);
-    }
+    };
 
     const decQty = () => {
         setQty((prevQty) => {
@@ -74,7 +82,7 @@ export const StateContext = ({ children }) => {
 
             return prevQty - 1;
         });
-    }
+    };
 
     return (
         <Context.Provider
@@ -82,7 +90,7 @@ export const StateContext = ({ children }) => {
                 showCart,
                 setShowCart,
                 cartItems,
-                totalPrice,
+                totalPrice: formatPrice(totalPrice),
                 totalQuantities,
                 qty,
                 incQty,
@@ -92,12 +100,12 @@ export const StateContext = ({ children }) => {
                 onRemove,
                 setCartItems,
                 setTotalPrice,
-                setTotalQuantities
+                setTotalQuantities,
             }}
         >
             {children}
         </Context.Provider>
-    )
-}
+    );
+};
 
 export const useStateContext = () => useContext(Context);
