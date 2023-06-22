@@ -2,7 +2,6 @@ import React from 'react'
 import Link from 'next/link'
 
 import { urlFor } from '@/lib/client'
-import product from '@/grocery-store/schemas/product'
 
 const Product = ({ product: { image, name, slug, details, price } }) => {
   return (
